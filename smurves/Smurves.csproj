@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+		<RootNamespace>cmdwtf.Smurves</RootNamespace>
+		<AssemblyName>$(RootNamespace)</AssemblyName>
+		<Deterministic>true</Deterministic>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<LangVersion>preview</LangVersion>
+		<Nullable>enable</Nullable>
+
+		<Description>The triple-random constrainable curve generator for smooth function perturbation.</Description>
+		<PackageTags>astronomy;astrophysics;cosmology;random;randomized algorithms;function perturbation;curves;curve</PackageTags>
+		<Product>cmd.wtf NumberStones</Product>
+
+		<Authors>Chris Marc Dailey (nitz)</Authors>
+		<PackageId>cmdwtf.Smurves</PackageId>
+		<Company>cmd.wtf</Company>
+		<Copyright>© 2022 Chris Marc Dailey</Copyright>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<PackageIcon>PackageIcon.png</PackageIcon>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageProjectUrl>https://cmd.wtf/projects/smurves</PackageProjectUrl>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/cmdwtf/smurves.NET</RepositoryUrl>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Title>$(Product)</Title>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Point.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.Toolkit" Version="7.1.2" />
+		<PackageReference Include="Microsoft.Toolkit.Diagnostics" Version="7.1.2" />
+		<PackageReference Include="RandN" Version="0.3.0" />
+		<PackageReference Include="Vim.Math3D" Version="1.6.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="$(ProjectDir)..\.meta\$(PackageIcon)" Visible="false">
+			<PackagePath>.\</PackagePath>
+		</Content>
+	</ItemGroup>
+
+	<Import Project="$(ProjectDir)..\.meta\VersionInfo.props" />
+
+</Project>
