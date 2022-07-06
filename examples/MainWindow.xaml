@@ -3,18 +3,25 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf" 
         xmlns:local="clr-namespace:cmdwtf.Smurves.Example"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" MouseDown="Window_MouseDown">
-    <Canvas x:Name="canvas">
-		<TextBlock x:Name="debugText"></TextBlock>
-	</Canvas>
-	<Window.Resources>
-		<ControlTemplate x:Key="PathTemplate">
-			<Path StrokeThickness="1" Stretch="Uniform"
-				  Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Canvas}}}"
-				  Height="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Canvas}}}"
-				  />
-		</ControlTemplate>
-	</Window.Resources>
+		mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+	<Window.DataContext>
+		<local:MainViewModel x:Name="data" />
+	</Window.DataContext>
+	<Grid>
+		<oxy:PlotView Model="{Binding Model}" />
+		<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10, 3, 0, 0">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Generate" VerticalAlignment="Center" />
+				<Separator Opacity="0" Width="10"/>
+				<Button Content="Normal" Command="{Binding GenerateCurvesCommand}" CommandParameter="{StaticResource False}"/>
+				<Separator Opacity="0" Width="3"/>
+				<Button Content="Logarithmic"  Command="{Binding GenerateCurvesCommand}" CommandParameter="{StaticResource True}"/>
+			</StackPanel>
+			<CheckBox Content="Show Logarithmic X Axis" IsChecked="{Binding LogarithmicXAxis}"/>
+			<CheckBox Content="Show Rejected Curves" IsChecked="{Binding ShowRejects}"/>
+		</StackPanel>
+	</Grid>
 </Window>

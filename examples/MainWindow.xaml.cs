@@ -11,8 +11,6 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Xml;
 
-using SWPoint = System.Windows.Point;
-
 namespace cmdwtf.Smurves.Example;
 
 /// <summary>
@@ -20,133 +18,9 @@ namespace cmdwtf.Smurves.Example;
 /// </summary>
 public partial class MainWindow : Window
 {
-	readonly System.Windows.Shapes.Path _validPath;
-	readonly System.Windows.Shapes.Path _rejectPath;
-
-	readonly PathGeometry _validPathGeometry = new();
-	readonly PathGeometry _rejectPathGeometry = new();
-
 	public MainWindow()
 	{
 		InitializeComponent();
-		if (((ControlTemplate)Resources["PathTemplate"]).LoadContent() is System.Windows.Shapes.Path vp)
-		{
-			_validPath = vp;
-			_validPath.Stroke = new SolidColorBrush(Colors.Blue);
-			_validPath.Data = _validPathGeometry;
-			canvas.Children.Add(_validPath);
-		}
-		else
-		{
-			throw new TypeInitializationException(typeof(System.Windows.Shapes.Path).FullName, null);
-		}
-
-		if (((ControlTemplate)Resources["PathTemplate"]).LoadContent() is System.Windows.Shapes.Path rp)
-		{
-			_rejectPath = rp;
-			_rejectPath.Stroke = new SolidColorBrush(Colors.Red);
-			_rejectPath.Data = _rejectPathGeometry;
-			canvas.Children.Add(_rejectPath);
-		}
-		else
-		{
-			throw new TypeInitializationException(typeof(System.Windows.Shapes.Path).FullName, null);
-		}
-
-		GenerateCurvesClassic();
-	}
-
-	private void GenerateCurvesClassic(bool doLogarithmic = true)
-	{
-		int lines = 10;
-
-		SurgeBinderSettings settingsLog = new SurgeBinderSettings()
-		{
-			IntervalX = new(0.001, 10),
-			IntervalY = new(0, 5),
-			Convergence = new(0.001, 1.0),
-			LogScale = true,
-			ChangeRange = new(0.2, 0.8),
-			StartForce = 0.01
-		};
-
-		SurgeBinderSettings settingsRegular = new SurgeBinderSettings()
-		{
-			IntervalX = new(0.5, 5),
-			IntervalY = new(0, 2),
-			Convergence = new(0.5, 1.0),
-			ChangeRange = new(0.2, 0.8),
-			StartForce = 0.5
-		};
-
-		SurgeBinder generator = new SurgeBinder(doLogarithmic ? settingsLog : settingsRegular);
-
-		List<Curve2> rejects = new List<Curve2>();
-
-		generator.RejectedCurve += c => rejects.Add(c);
-
-		List<Curve2> curves = generator.Generate(lines);
-
-		debugText.Text = doLogarithmic ? "Logarithmic" : "Regular";
-
-		_validPathGeometry.Clear();
-		_rejectPathGeometry.Clear();
-
-		foreach (Curve2 curve in curves)
-		{
-			AddToGeometry(_validPathGeometry, curve);
-		}
-
-		foreach (Curve2 curve in rejects)
-		{
-			AddToGeometry(_rejectPathGeometry, curve);
-		}
-
-		canvas.UpdateLayout();
-	}
-
-	private void AddToGeometry(PathGeometry geometry, Curve2 curve)
-	{
-		IEnumerable<SWPoint> points = curve.Samples.Select(p => new SWPoint(p.X, p.Y));
-
-		//var segment = new PolyBezierSegment(points, isStroked: true);
-		var segment = new PolyLineSegment(points, isStroked: true);
-
-		PathFigure pf = new()
-		{
-			StartPoint = points.First()
-		};
-
-		string dbgX = curve.Samples.SelectWithPrev((a, b, idx) =>
-		{
-			double val = a.X - b.X;
-			return (val != 0 || idx < 2)
-				? string.Empty
-				: $"{idx}: {val} ({a.X})";
-		})
-			.Where(v => !string.IsNullOrEmpty(v))
-			.ToList()
-			.Pipe(l => string.Join(", ", l));
-
-		string dbgY = curve.Samples.SelectWithPrev((a, b, idx) =>
-		{
-			double val = a.Y - b.Y;
-			return (val != 0 || idx < 2)
-				? string.Empty
-				: $"{idx}: {val} ({a.Y})";
-		})
-			.Where(v => !string.IsNullOrEmpty(v))
-			.ToList()
-			.Pipe(l => string.Join(", ", l));
-
-		pf.Segments.Add(segment);
-
-		geometry.Figures.Add(pf);
-	}
-
-	private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-	{
-		GenerateCurvesClassic(e.LeftButton == System.Windows.Input.MouseButtonState.Pressed);
 	}
 }
 
